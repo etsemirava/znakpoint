@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>znakpoint · 8 AI-инструментов · PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0B0C; --bg-2:#0F1113; --card:#15171A; --card-2:#191C20;
+    --line:#2A2E33; --ink:#F3F4F2; --ink-soft:#C4C7CB; --muted:#8A8E93;
+    --lime:#C7F24E; --lime-dim:#9FC23B; --lime-ink:#0A0B0C; --lime-glow:rgba(199,242,78,.13);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  @page{ size:A4; margin:0; }
+  html,body{ background:var(--bg); }
+  body{ font-family:'Inter',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+  .page{
+    position:relative; width:210mm; height:297mm; overflow:hidden;
+    background:var(--bg); padding:16mm 15mm 17mm; display:flex; flex-direction:column;
+    page-break-after:always; break-after:page;
+  }
+  .page:last-child{ page-break-after:auto; }
+
+  /* running header / footer */
+  .rhead{ display:flex; align-items:center; justify-content:space-between; margin-bottom:9mm; }
+  .rbrand{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; letter-spacing:.02em; color:var(--ink); }
+  .rbrand .dot{ width:9px;height:9px;border-radius:50%;background:var(--lime); }
+  .rtag{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
+  .rfoot{ position:absolute; left:15mm; right:15mm; bottom:9mm; display:flex; align-items:center; justify-content:space-between;
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:#5B5F65;
+    border-top:1px solid var(--line); padding-top:7px; }
+
+  .sec-label{ display:flex; align-items:baseline; gap:14px; margin-bottom:5mm; }
+  .sec-num{ font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px; color:var(--lime); }
+  h2{ font-family:'Fraunces',serif; font-weight:600; font-size:27px; line-height:1.12; letter-spacing:-.02em; color:var(--ink); }
+  h2 em{ font-style:normal; color:var(--lime); }
+  .lead{ color:var(--ink-soft); font-size:14px; line-height:1.5; max-width:62ch; margin-bottom:6mm; }
+  .content{ flex:1; display:flex; flex-direction:column; }
+
+  /* ---------- COVER ---------- */
+  .cover{ justify-content:space-between; }
+  .cover:before{ content:""; position:absolute; inset:0;
+    background:radial-gradient(640px 420px at 92% -6%, var(--lime-glow), transparent 70%),
+               radial-gradient(520px 380px at -8% 108%, rgba(199,242,78,.07), transparent 70%); }
+  .cover-top, .cover-mid, .cover-bot{ position:relative; z-index:1; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:9px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.16em;
+    color:var(--lime); background:var(--lime-glow); border:1px solid #2E3A1A; padding:8px 15px; border-radius:999px; }
+  .eyebrow .dot{ width:7px;height:7px;border-radius:50%;background:var(--lime); }
+  .cover h1{ font-family:'Fraunces',serif; font-weight:600; font-size:50px; line-height:1.04; letter-spacing:-.02em; color:var(--ink); max-width:15ch; }
+  .cover h1 em{ font-style:normal; color:var(--lime); }
+  .cover .sub{ margin-top:22px; font-size:18px; line-height:1.5; color:var(--ink-soft); max-width:52ch; }
+  .author{ display:flex; align-items:center; gap:15px; padding-top:18px; border-top:1px solid var(--line); }
+  .avatar{ width:52px;height:52px;border-radius:50%;flex:none; background:linear-gradient(145deg,var(--lime),var(--lime-dim));
+    color:var(--lime-ink); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:21px; font-weight:600; }
+  .author b{ font-size:15px; }
+  .author .l{ color:var(--muted); font-size:12.5px; margin-top:2px; }
+  .author .l a{ color:var(--lime); text-decoration:none; font-weight:600; }
+  .cover-brand{ display:flex; align-items:center; gap:9px; font-weight:700; font-size:15px; color:var(--ink); }
+  .cover-brand .dot{ width:11px;height:11px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px var(--lime-glow); }
+
+  /* ---------- CARDS ---------- */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:6mm; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:7mm 7mm 6.5mm; }
+  .card .tag{ font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600; color:var(--lime); letter-spacing:.08em; text-transform:uppercase; }
+  .card h3{ font-size:16px; font-weight:600; margin:7px 0 7px; color:var(--ink); letter-spacing:-.01em; }
+  .card p{ font-size:13px; line-height:1.5; color:var(--ink-soft); }
+
+  .callout{ margin-top:6mm; background:linear-gradient(150deg,#16180F,#101113 65%); border:1px solid #38431F; border-radius:16px;
+    padding:7mm 8mm; position:relative; overflow:hidden; }
+  .callout:before{ content:""; position:absolute; right:-40px; top:-40px; width:170px; height:170px; background:radial-gradient(circle,rgba(199,242,78,.2),transparent 70%); }
+  .callout .k{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--lime); margin-bottom:9px; position:relative; }
+  .callout p{ font-size:15px; line-height:1.5; color:var(--ink-soft); position:relative; max-width:64ch; }
+  .callout b{ color:var(--lime); }
+
+  /* ---------- STEPS ---------- */
+  .steps{ display:flex; flex-direction:column; gap:3.6mm; }
+  .step{ display:grid; grid-template-columns:46px 1fr; gap:16px; align-items:start;
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:4.6mm 6mm; }
+  .step .n{ width:42px;height:42px;border-radius:12px;flex:none; background:var(--lime-glow); color:var(--lime); border:1px solid #36421E;
+    font-family:'Fraunces',serif; font-size:20px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+  .step h3{ font-size:15px; font-weight:600; margin-bottom:3px; color:var(--ink); }
+  .step p{ font-size:12.5px; line-height:1.45; color:var(--ink-soft); }
+
+  /* ---------- CHIPS + 41 ---------- */
+  .chips-label{ margin:4.5mm 0 3mm; font-weight:600; font-size:13.5px; color:var(--ink); }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{ background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:8px 14px; font-size:12.5px; font-weight:500; color:var(--ink-soft); display:inline-flex; align-items:center; gap:8px; }
+  .chip:before{ content:""; width:6px;height:6px;border-radius:50%;background:var(--lime); }
+  .signal41{ margin-top:4.5mm; display:flex; align-items:center; gap:7mm; background:linear-gradient(150deg,#16180F,#101113 65%);
+    border:1px solid #38431F; border-radius:16px; padding:6mm 8mm; position:relative; overflow:hidden; }
+  .signal41:before{ content:""; position:absolute; right:-40px; top:-40px; width:180px; height:180px; background:radial-gradient(circle,rgba(199,242,78,.22),transparent 70%); }
+  .signal41 .big{ font-family:'Fraunces',serif; font-weight:600; font-size:58px; line-height:1; color:var(--lime); position:relative; }
+  .signal41 .txt{ position:relative; flex:1; }
+  .signal41 .k{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--lime); margin-bottom:6px; }
+  .signal41 p{ font-size:13.5px; line-height:1.5; color:var(--ink-soft); }
+  .signal41 b{ color:var(--lime); }
+
+  /* ---------- TOOLS ---------- */
+  .tools{ display:grid; grid-template-columns:1fr 1fr; gap:6mm; }
+  .tool{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:6.5mm; display:flex; flex-direction:column; }
+  .tool .top{ display:flex; align-items:center; gap:11px; }
+  .tool .logo{ width:40px;height:40px;border-radius:11px;flex:none; display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:#fff; }
+  .tool h3{ font-size:17px; font-weight:600; color:var(--ink); letter-spacing:-.01em; }
+  .tool .role{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:var(--lime); margin:9px 0 8px; }
+  .tool p{ font-size:12px; line-height:1.45; color:var(--ink-soft); margin-bottom:11px; }
+  .tool .price{ margin-top:auto; font-size:11.5px; color:var(--muted); border-top:1px dashed var(--line); padding-top:9px; }
+  .tool .price b{ color:var(--ink); font-weight:600; }
+
+  .total{ margin-top:6mm; background:linear-gradient(150deg,#16180F,#101113 65%); border:1px solid #38431F; border-radius:14px; padding:6mm 7mm; color:var(--ink-soft); font-size:13.5px; line-height:1.5; }
+  .total b{ color:var(--lime); }
+  .note{ margin-top:5mm; background:var(--bg-2); border:1px solid var(--line); border-left:3px solid var(--lime); border-radius:12px; padding:5.5mm 6.5mm; font-size:13px; line-height:1.5; color:var(--ink-soft); }
+  .note b{ color:var(--ink); }
+
+  .pmap{ display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-top:1mm; }
+  .pm{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:5.5mm 6mm; }
+  .pm .pair{ font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--lime); font-size:13px; margin-bottom:5px; }
+  .pm span{ font-size:12.5px; line-height:1.45; color:var(--ink-soft); }
+
+  /* ---------- TABLE ---------- */
+  .tbl{ border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  table{ width:100%; border-collapse:collapse; background:var(--card); }
+  th,td{ text-align:left; vertical-align:top; padding:11px 16px; font-size:12.5px; line-height:1.4; border-bottom:1px solid var(--line); }
+  thead th{ font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; background:var(--bg-2); }
+  thead th:nth-child(3){ color:var(--lime); }
+  tbody tr:last-child td{ border-bottom:none; }
+  td:first-child{ font-weight:600; color:var(--ink); width:24%; }
+  td:nth-child(2){ color:var(--muted); }
+  td:nth-child(3){ color:var(--ink-soft); background:rgba(199,242,78,.05); font-weight:500; }
+  td:nth-child(3) b{ color:var(--lime); }
+
+  /* ---------- IMPLEMENT ---------- */
+  .impl{ display:flex; flex-direction:column; }
+  .impl .row{ display:grid; grid-template-columns:54px 1fr; gap:18px; padding:5.5mm 0; border-bottom:1px solid var(--line); }
+  .impl .row:first-child{ padding-top:0; }
+  .impl .idx{ font-family:'Fraunces',serif; font-size:32px; font-weight:600; color:var(--lime); line-height:1; }
+  .impl h3{ font-size:16px; font-weight:600; margin-bottom:5px; color:var(--ink); }
+  .impl p{ font-size:13px; line-height:1.5; color:var(--ink-soft); }
+
+  /* ---------- CTA ---------- */
+  .cta-page{ justify-content:center; }
+  .cta-page:before{ content:""; position:absolute; inset:0;
+    background:radial-gradient(560px 360px at 50% 12%, var(--lime-glow), transparent 70%); }
+  .cta{ position:relative; z-index:1; text-align:center; max-width:520px; margin:0 auto; }
+  .cta .k{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--lime); margin-bottom:16px; }
+  .cta h2{ font-size:34px; line-height:1.1; margin-bottom:18px; }
+  .cta p{ color:var(--ink-soft); font-size:15px; line-height:1.55; margin-bottom:14px; }
+  .cta .btn{ display:inline-block; margin-top:14px; background:var(--lime); color:var(--lime-ink); font-weight:700; font-size:16px; padding:14px 30px; border-radius:999px; text-decoration:none; }
+  .cta b{ color:var(--lime); }
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE 1 · COVER ===== -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-brand"><span class="dot"></span>znakpoint</div>
+  </div>
+  <div class="cover-mid">
+    <span class="eyebrow"><span class="dot"></span> outbound без SDR</span>
+    <h1 style="margin-top:24px">8 AI-инструментов, которые найдут вам <em>первых клиентов</em> на западном рынке</h1>
+    <p class="sub">Как устроены системы outbound-продаж без SDR-команды, и как запустить такую систему самому, даже если вы никогда не занимались продажами.</p>
+  </div>
+  <div class="cover-bot">
+    <div class="author">
+      <div class="avatar">ЕТ</div>
+      <div>
+        <b>Елена Темирова</b>
+        <div class="l"><a>@znakpoint</a> · znakpoint.com</div>
+        <div class="l">25+ лет в enterprise-консалтинге (Deloitte, EPAM, Coca-Cola, Adidas, Siemens) · Kellogg-WHU Executive MBA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 2 · PROBLEM ===== -->
+<div class="page">
+  <div class="rhead"><div class="rbrand"><span class="dot"></span>znakpoint</div><div class="rtag">Проблема</div></div>
+  <div class="content">
+    <div class="sec-label"><div class="sec-num">01</div><h2>Почему founder-led sales <em>не масштабируется</em></h2></div>
+    <p class="lead">Большинство фаундеров продают одинаково: пишут в LinkedIn, просят интро через нетворк, иногда рассылают что-то холодное. Какое-то время это работает. Потом — перестаёт. Есть четыре причины.</p>
+    <div class="grid2">
+      <div class="card"><div class="tag">Причина 1</div><h3>Вы узкое горлышко</h3><p>Вы физически успеваете изучить и написать 10–15 компаниям в день. Остальное время — продукт, команда, инвесторы. Продажи идут по остаточному принципу.</p></div>
+      <div class="card"><div class="tag">Причина 2</div><h3>Нетворк заканчивается</h3><p>Тёплый круг конечен. Когда он исчерпан, остаётся либо нанимать SDR (дорого и долго), либо писать холодные шаблоны, на которые никто не отвечает.</p></div>
+      <div class="card"><div class="tag">Причина 3</div><h3>Хороший момент упускается</h3><p>Компания закрыла раунд, наняла VP Sales, сменила стек — вы об этом не знаете и пишете через полгода, когда бюджет уже распределён.</p></div>
+      <div class="card"><div class="tag">Причина 4</div><h3>Непонятно, что работает</h3><p>Без системы не понять: почему ответили эти пять компаний и не ответили остальные сорок? Масштабировать нечего.</p></div>
+    </div>
+    <div class="callout">
+      <div class="k">Главный сдвиг</div>
+      <p>Покупатели на западном рынке перестали отвечать на шаблонные письма. Работает только <b>гипер-персонализация</b> — письмо под конкретную компанию и её ситуацию прямо сейчас. Вручную это не масштабируется. С AI — масштабируется.</p>
+    </div>
+  </div>
+  <div class="rfoot"><span>znakpoint.com</span><span>02</span></div>
+</div>
+
+<!-- ===== PAGE 3 · MECHANICS ===== -->
+<div class="page">
+  <div class="rhead"><div class="rbrand"><span class="dot"></span>znakpoint</div><div class="rtag">Механика</div></div>
+  <div class="content">
+    <div class="sec-label"><div class="sec-num">02</div><h2>Как работает <em>AI-система</em> привлечения клиентов</h2></div>
+    <p class="lead">Это не «бот, который спамит». Это конвейер из пяти этапов, где AI делает рутину, а вы подключаетесь только когда есть живой интерес.</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><div><h3>Сигналы: находим тех, кому нужно сейчас</h3><p>Система отслеживает события: закрыли раунд, наняли руководителя продаж, запускают новый продукт, выходят на новый рынок. Это значит «у компании появилась потребность и бюджет».</p></div></div>
+      <div class="step"><div class="n">2</div><div><h3>Обогащение: собираем данные</h3><p>По каждой компании автоматически подтягиваются контакты нужных людей, размер команды, технологии, активность — из десятков источников за минуты.</p></div></div>
+      <div class="step"><div class="n">3</div><div><h3>Исследование: AI изучает компанию</h3><p>AI читает сайт, новости, профили основателей и формулирует: чем живёт компания, какая у неё боль и при чём здесь ваш продукт.</p></div></div>
+      <div class="step"><div class="n">4</div><div><h3>Персонализация: пишет в вашем голосе</h3><p>AI пишет первое письмо под конкретного человека — с его контекстом, а не «Здравствуйте, {FirstName}». Структура и сигнал — гипотеза, текст — индивидуальный.</p></div></div>
+      <div class="step"><div class="n">5</div><div><h3>Отправка и диалог</h3><p>Письма уходят по email и LinkedIn с прогретых аккаунтов, follow-up автоматический, ответы в едином inbox. Вы подключаетесь, когда есть живой интерес — и закрываете сделку сами.</p></div></div>
+    </div>
+    <div class="chips-label">Примеры сигналов, по которым система находит «тёплые» компании:</div>
+    <div class="chips">
+      <span class="chip">закрыли раунд Seed / Series A</span>
+      <span class="chip">наняли VP Sales или Head of Growth</span>
+      <span class="chip">запустили новый продукт</span>
+      <span class="chip">выходят на новую географию</span>
+      <span class="chip">быстро растёт команда</span>
+      <span class="chip">сменили технологический стек</span>
+    </div>
+    <div class="signal41">
+      <div class="big">41</div>
+      <div class="txt">
+        <div class="k">Сигнальная таксономия znakpoint</div>
+        <p>Выше — лишь несколько примеров. В <b>znakpoint</b> мы знаем и оперируем <b>более чем 40 сигналами</b>: 41 в нашей таксономии. Чем точнее сигнал, тем выше шанс попасть в момент, когда у компании есть и потребность, и бюджет.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rfoot"><span>znakpoint.com</span><span>03</span></div>
+</div>
+
+<!-- ===== PAGE 4 · TOOLS A ===== -->
+<div class="page">
+  <div class="rhead"><div class="rbrand"><span class="dot"></span>znakpoint</div><div class="rtag">Инструменты · 1/2</div></div>
+  <div class="content">
+    <div class="sec-label"><div class="sec-num">03</div><h2><em>8 инструментов</em> системы</h2></div>
+    <p class="lead">Каждый инструмент закрывает функцию, под которую раньше нанимали отдельного человека.</p>
+    <div class="tools">
+      <div class="tool"><div class="top"><div class="logo" style="background:#3A6FF8">Cl</div><h3>Clay</h3></div>
+        <div class="role">Заменяет: аналитика-ресёчера</div>
+        <p>Центр обогащения данных. Подключается к 100+ источникам и по каждой компании собирает контакты, сигналы, технологии, новости — в одну таблицу. Час ручной работы Clay делает за секунды по тысяче компаний.</p>
+        <div class="price"><b>от ~$140/мес</b> · есть бесплатный план</div></div>
+      <div class="tool"><div class="top"><div class="logo" style="background:#C6492B">Cl</div><h3>Claude</h3></div>
+        <div class="role">Заменяет: копирайтера и ресёчера</div>
+        <p>Мозг системы. Изучает сайт и контекст компании, формулирует гипотезу боли и пишет персонализированное письмо, которое звучит как написанное человеком. Помогает и при обработке ответов.</p>
+        <div class="price"><b>от $20/мес (Pro)</b> · API по использованию</div></div>
+      <div class="tool"><div class="top"><div class="logo" style="background:#1B1F3B">Ap</div><h3>Apollo.io</h3></div>
+        <div class="role">Заменяет: покупку баз и холодный поиск</div>
+        <p>База из сотен миллионов B2B-контактов с фильтрами по индустрии, размеру компании, должности и технологиям. Отсюда система берёт «сырой» список, который дальше обогащается по сигналам.</p>
+        <div class="price"><b>от ~$50/мес</b> · есть бесплатный план</div></div>
+      <div class="tool"><div class="top"><div class="logo" style="background:#E8542B">Fc</div><h3>Firecrawl</h3></div>
+        <div class="role">Заменяет: ручной сбор данных с сайтов</div>
+        <p>Превращает любой сайт в структурированные данные для AI. Система «скармливает» Claude страницы компании, блог, кейсы — и на этом строится настоящая персонализация, а не догадки.</p>
+        <div class="price"><b>от ~$16/мес</b> · есть бесплатный лимит</div></div>
+    </div>
+  </div>
+  <div class="rfoot"><span>znakpoint.com</span><span>04</span></div>
+</div>
+
+<!-- ===== PAGE 5 · TOOLS B ===== -->
+<div class="page">
+  <div class="rhead"><div class="rbrand"><span class="dot"></span>znakpoint</div><div class="rtag">Инструменты · 2/2</div></div>
+  <div class="content">
+    <div class="tools">
+      <div class="tool"><div class="top"><div class="logo" style="background:#EA4B71">n8</div><h3>n8n</h3></div>
+        <div class="role">Заменяет: координатора процессов</div>
+        <p>Конструктор автоматизаций, который соединяет все инструменты в единый конвейер: появился сигнал, обогатили, исследовали, написали, отправили, записали в CRM. Без кода, визуальными блоками.</p>
+        <div class="price"><b>от ~€24/мес</b> · self-hosted бесплатно</div></div>
+      <div class="tool"><div class="top"><div class="logo" style="background:#2E6FE6">Sl</div><h3>Smartlead</h3></div>
+        <div class="role">Заменяет: SDR-а на отправке email</div>
+        <p>Холодные email-кампании: ротация ящиков, прогрев доменов, автоматические follow-up, единый inbox. Решает главную техническую задачу — чтобы письма доходили во «Входящие», а не в спам.</p>
+        <div class="price"><b>от ~$39/мес</b></div></div>
+      <div class="tool"><div class="top"><div class="logo" style="background:#0A66C2">Hr</div><h3>HeyReach</h3></div>
+        <div class="role">Заменяет: SDR-а в LinkedIn</div>
+        <p>Автоматизация LinkedIn-аутрича: заявки в контакты, сообщения, follow-up — с нескольких аккаунтов параллельно и в безопасных лимитах. LinkedIn — главный канал B2B-продаж на западе.</p>
+        <div class="price"><b>от ~$79/мес</b></div></div>
+      <div class="tool"><div class="top"><div class="logo" style="background:#F2B600;color:#16181D">At</div><h3>Airtable</h3></div>
+        <div class="role">Заменяет: CRM и операционный учёт</div>
+        <p>Гибкая база данных, где живёт вся система: компании, сигналы, статусы, тексты писем, ответы. Видно всю воронку: сколько нашли, скольким написали, кто ответил, какие сигналы сработали.</p>
+        <div class="price"><b>от ~$20/мес</b> · есть бесплатный план</div></div>
+    </div>
+    <div class="total"><b>Итого:</b> полный стек обходится примерно в $300–500 в месяц. Это меньше недельной стоимости одного SDR на западном рынке — при кратно большей производительности.</div>
+    <div class="chips-label">Как инструменты складываются в конвейер:</div>
+    <div class="pmap">
+      <div class="pm"><div class="pair">Apollo + Clay</div><span>находят компании и обогащают данными по сигналам</span></div>
+      <div class="pm"><div class="pair">Firecrawl + Claude</div><span>исследуют каждую компанию и пишут персональное письмо</span></div>
+      <div class="pm"><div class="pair">Smartlead + HeyReach</div><span>доставляют сообщения по email и LinkedIn</span></div>
+      <div class="pm"><div class="pair">n8n + Airtable</div><span>соединяют всё в систему и показывают воронку</span></div>
+    </div>
+  </div>
+  <div class="rfoot"><span>znakpoint.com</span><span>05</span></div>
+</div>
+
+<!-- ===== PAGE 6 · COMPARISON ===== -->
+<div class="page">
+  <div class="rhead"><div class="rbrand"><span class="dot"></span>znakpoint</div><div class="rtag">Сравнение</div></div>
+  <div class="content">
+    <div class="sec-label"><div class="sec-num">04</div><h2>AI-система <em>vs</em> найм первого SDR</h2></div>
+    <p class="lead">Сравниваем найм первого SDR с AI-системой под управлением фаундера.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Критерий</th><th>Первый SDR</th><th>AI-система + фаундер</th></tr></thead>
+        <tbody>
+          <tr><td>Стоимость в месяц</td><td>$5 000–8 000 + налоги</td><td><b>$300–500</b> на инструменты</td></tr>
+          <tr><td>Запуск</td><td>3–4 месяца найма и обучения</td><td><b>2–4 недели</b> на сборку</td></tr>
+          <tr><td>Компаний в работе</td><td>15–25 в день качественно</td><td><b>Сотни в день</b>, без потери качества</td></tr>
+          <tr><td>Персонализация</td><td>Зависит от человека</td><td>Стабильная, под каждую компанию</td></tr>
+          <tr><td>Выбор, кому писать</td><td>По спискам и интуиции</td><td>По сигналам: кому нужно сейчас</td></tr>
+          <tr><td>Follow-up</td><td>Забывается, теряется</td><td>Автоматический, ничего не теряется</td></tr>
+          <tr><td>Масштабирование</td><td>Нанять и обучить ещё людей</td><td>Увеличить лимиты и аккаунты</td></tr>
+          <tr><td>Уход сотрудника</td><td>Экспертиза уходит с человеком</td><td>Система остаётся и задокументирована</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>Честное уточнение:</b> AI-система не закрывает сделки за вас. Она убирает рутину до разговора — поиск, исследование, первый контакт, follow-up. Эта рутина съедает 70–80% времени. Освободив её, вы тратите время только там, где важен ваш личный контакт.</div>
+  </div>
+  <div class="rfoot"><span>znakpoint.com</span><span>06</span></div>
+</div>
+
+<!-- ===== PAGE 7 · IMPLEMENT ===== -->
+<div class="page">
+  <div class="rhead"><div class="rbrand"><span class="dot"></span>znakpoint</div><div class="rtag">Внедрение</div></div>
+  <div class="content">
+    <div class="sec-label"><div class="sec-num">05</div><h2>От нуля до <em>первых встреч</em></h2></div>
+    <p class="lead">Не нужно нанимать GTM-инженера или ждать денег на команду. Вот реалистичный план первой недели.</p>
+    <div class="impl">
+      <div class="row"><div class="idx">1</div><div><h3>Определите сигнал</h3><p>Выберите одно событие, означающее «этой компании нужен ваш продукт прямо сейчас». Например: закрыли Seed-раунд → нужно строить pipeline, нет времени делать это вручную.</p></div></div>
+      <div class="row"><div class="idx">2</div><div><h3>Соберите первый список</h3><p>Через Apollo или Crunchbase найдите 20–30 компаний, у которых этот сигнал сработал за последние 3–6 месяцев. Бесплатных лимитов хватит.</p></div></div>
+      <div class="row"><div class="idx">3</div><div><h3>Исследуйте и напишите с Claude</h3><p>По каждой компании — сайт, LinkedIn основателя, новости. Попросите Claude сформулировать гипотезу боли и написать первое письмо в вашем голосе. Сравните с тем, что написали бы сами.</p></div></div>
+      <div class="row"><div class="idx">4</div><div><h3>Отправьте руками, потом автоматизируйте</h3><p>Первые 20 писем — вручную. Это покажет, какая гипотеза работает. Только после первых ответов стоит собирать автоматизацию на n8n и подключать Smartlead / HeyReach.</p></div></div>
+      <div class="row"><div class="idx">5</div><div><h3>Задокументируйте, что сработало</h3><p>Один задокументированный мини-кейс с цифрами — основа для масштабирования. Что сработало → закладываете в систему → система воспроизводит это в масштабе.</p></div></div>
+    </div>
+    <div class="note"><b>Типичная ошибка фаундера:</b> учить инструменты «про запас» месяцами. Начните с 20 писем руками — и вы узнаете о своём ICP больше, чем за месяц в Notion. Инструменты меняются, механика — нет.</div>
+  </div>
+  <div class="rfoot"><span>znakpoint.com</span><span>07</span></div>
+</div>
+
+<!-- ===== PAGE 8 · CTA ===== -->
+<div class="page cta-page">
+  <div class="cta">
+    <div class="k">06 · Что дальше</div>
+    <h2>Хотите разобраться, как это применить <em>в вашей ситуации?</em></h2>
+    <p>У каждого стартапа свой ICP, свой сигнал и своя точка входа. На созвоне мы разберём вашу конкретную ситуацию: кому писать, какой сигнал искать, с чего начать уже на этой неделе.</p>
+    <p>Напишите в Telegram <b>@znakpoint</b>. Если мы уже назначили созвон — проверьте календарь. Если ещё не назначили — напишите мне лично, я отвечу и предложу время.</p>
+    <a class="btn" href="https://t.me/znakpoint">Написать в Telegram →</a>
+  </div>
+  <div class="rfoot"><span>Елена Темирова · @znakpoint · znakpoint.com</span><span>08</span></div>
+</div>
+
+</body>
+</html>
